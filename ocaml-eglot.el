@@ -821,9 +821,5 @@ OCaml Eglot provides standard implementations of the various custom-requests
       (goto-char (point-min))
       (ocaml-eglot-objinfo-mode))))
 
-
-;;;###autoload
-(add-hook 'find-file-hook #'ocaml-eglot-objinfo-handler)
-
 (provide 'ocaml-eglot)
 ;;; ocaml-eglot.el ends here
