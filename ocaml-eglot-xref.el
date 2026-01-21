@@ -16,6 +16,7 @@
 
 (require 'cl-lib)
 (require 'xref)
+(require 'eglot)
 (require 'ocaml-eglot-util)
 (require 'ocaml-eglot-req)
 
@@ -87,18 +88,10 @@ than a character offset, so we can't use `xref-make-file-location'."
                         "-look-for" (symbol-name ocaml-eglot-locate-preference)))))
     (ocaml-eglot-req--merlin-call "locate" argv)))
 
-(defun ocaml-eglot-xref--occurences (symbol)
-  "Compute occurrences for the given SYMBOL."
-  (let ((pt (get-text-property 0 'ocaml-eglot-xref-point symbol)))
-    (cl-assert pt nil "OCaml-eglot xref-find-references cannot be used by explicitly typing in a symbol %s" symbol)
-    (let ((result (ocaml-eglot-xref--call-occurences pt)))
-      ;; Change the vector into a list
-      (append (ocaml-eglot-util--merlin-call-result result) nil))))
-
 (defun ocaml-eglot-xref--buffer (file)
-  "Compute a buffer in term of FILE based on occurences results."
+  "Compute a buffer in term of FILE based on occurrences results."
   (if (equal file "/*buffer*")
-      ;; occurences returns "/*buffer*" as the filename for occurences
+      ;; occurrences returns "/*buffer*" as the filename for occurrences
       ;; in the current buffer when we don't pass the -filename argument.
       (current-buffer)
     ;; Look for an existing buffer with this file, but don't open it
@@ -147,16 +140,7 @@ Requires that the current buffer be the buffer of FILE."
 
 (cl-defmethod xref-backend-references ((_backend (eql ocaml-eglot-xref)) symbol)
   "An `xref-backend-references' for SYMBOL for OCaml-eglot."
-  (let ((occurences (ocaml-eglot-xref--occurences symbol))
-        result)
-    (dolist (loc occurences)
-      (let* ((file (cl-getf loc :file))
-             (start-pos (cl-getf loc :start))
-             (buffer (ocaml-eglot-xref--buffer file))
-             (location (ocaml-eglot-xref--make-location-in-file file start-pos)))
-        (push (ocaml-eglot-xref--push-marker
-               symbol buffer start-pos loc location) result)))
-    (reverse result)))
+  (xref-backend-references 'eglot symbol))
 
 (cl-defmethod xref-backend-definitions ((_backend (eql ocaml-eglot-xref)) symbol)
   "Extension of `xref-backend-definitions' for SYMBOL."
