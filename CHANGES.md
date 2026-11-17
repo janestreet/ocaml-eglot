@@ -2,6 +2,7 @@ unreleased
 ======================
 
 - Replace `C-x` for `extract at toplevel` _in enclosing_ by `C-e`
+- Add `ocaml-eglot-completion-at-point`, a `completion-at-point` function using the `ocamllsp/completePrefixAtPos` custom request, and use it for `xref-backend-identifier-completion-table`
 
 ocaml-eglot 1.4.0
 ======================

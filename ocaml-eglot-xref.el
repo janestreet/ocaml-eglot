@@ -19,6 +19,7 @@
 (require 'eglot)
 (require 'ocaml-eglot-util)
 (require 'ocaml-eglot-req)
+(require 'ocaml-eglot-completion)
 
 (defcustom ocaml-eglot-locate-preference 'ml
   "Determine whether locate should in priority look in ml or mli files."
@@ -63,7 +64,8 @@ than a character offset, so we can't use `xref-make-file-location'."
   (let ((argv
          ;; SYMBOL was probably just typed in by the user.  So pass it
          ;; to Merlin, removing a trailing "." in case the user completed
-         ;; a module name with `merlin-cap-dot-after-module':
+         ;; a module name with
+         ;; `ocaml-eglot-completion-dot-after-module':
          (vector "-prefix" (string-remove-suffix "." symbol)
                  ;; We don't know if SYMBOL is a module or type or
                  ;; expr, and we shouldn't use -position to guess.
@@ -116,12 +118,9 @@ Requires that the current buffer be the buffer of FILE."
         (ocaml-eglot-xref--make-location-in-file (cl-getf loc :file)
                                                  (cl-getf loc :pos)))))))
 
-
 (cl-defmethod xref-backend-identifier-completion-table ((_backend (eql ocaml-eglot-xref)))
   "Return a list of symbols for completion."
-  ;; TODO: xref-backend-identifier-completion-table
-  ;; missing `merlin-cap-table'
-  nil)
+  (ocaml-eglot-completion-table-for (current-buffer)))
 
 (defconst ocaml-eglot-xref--operator-regexp
   (eval-when-compile
