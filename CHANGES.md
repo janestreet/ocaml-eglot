@@ -3,6 +3,8 @@ unreleased
 
 - Replace `C-x` for `extract at toplevel` _in enclosing_ by `C-e`
 - Add `ocaml-eglot-completion-at-point`, a `completion-at-point` function using the `ocamllsp/completePrefixAtPos` custom request, and use it for `xref-backend-identifier-completion-table`
+- Display long documentation from `ocaml-eglot-document` in the `ocaml-eglot-type-buffer-name` buffer instead of truncating it in the echo area
+- Make `ocaml-eglot-document` report when there is no documentation
 
 ocaml-eglot 1.4.0
 ======================
